@@ -1,0 +1,23 @@
+# Base image
+FROM ubuntu:20.04
+
+# Disable prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Apache
+RUN apt-get update && \
+    apt-get install -y apache2 && \
+    apt-get clean
+
+# Copy code into Apache’s root directory
+COPY . /var/www/html
+
+# Expose port 82
+EXPOSE 82
+
+# Change Apache to listen on port 82
+RUN sed -i 's/80/82/g' /etc/apache2/ports.conf && \
+    sed -i 's/80/82/g' /etc/apache2/sites-available/000-default.conf
+
+# Start Apache
+CMD ["apachectl", "-D", "FOREGROUND"]
